@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+</head>
+<style>
+
+    .card-img-top {
+        object-fit: cover;
+
+    }
+
+    .card-custom {
+        width: 360px;
+        height: 550px;
+    }
+
+    .search-input {
+        width: 250px;
+        padding: 15px;
+        font-size: 18px;
+    }
+
+    .search-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+
+    .search-form {
+        margin-left: 323px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .col-md-3 .list-group {
+        height: 400px;
+        overflow-y: auto;
+        margin-top: -80px;
+    }
+
+    .list-group-item {
+        border: none;
+        box-shadow: none;
+        background-color: #e0e0e0;
+        color: #333333;
+    }
+
+    .list-group-item.active {
+        background-color: #FFD700;
+        color: #333333;
+        border-color: #FFD700;
+
+
+    }
+
+    .list-group {
+        position: fixed;
+        top: 176px; /* Укажите высоту навбара, чтобы панель начиналась сразу под ним */
+        left: 20px;
+        width: 250px; /* Убедитесь, что ширина подходит для вашей макетной сетки */
+        z-index: 1000;
+    }
+
+    .list-group-item.active:hover {
+        background-color: #FFCC00;
+        color: #333333;
+    }
+
+    .wrapper {
+        display: flex;
+        justify-content: center;
+    }
+
+    .container {
+        margin-left: 5px;
+        flex-basis: 80%;/* Подвинет контейнер левее, настройте значение по своему усмотрению */
+    }
+
+    body {
+        padding-top: 70px; /* Регулируйте значение в зависимости от высоты навбара */
+    }
+
+    .navbar-nav .nav-item {
+        margin-right: 15px;
+    }
+
+    .navbar-nav .dropdown-menu {
+        min-width: 150px;
+        text-align: center;
+    }
+
+    .navbar-brand {
+        margin-right: 30px;
+    }
+
+    html, body {
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Подсвечиваем активный элемент в меню */
+    .list-group-item.active {
+        background-color: #f7e99e;
+        color: black;
+    }
+
+    /* Дополнительные стили для плавной прокрутки */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    .category-section {
+        padding: 50px 0;
+        margin-top: 50px; /* Отступы для разделов */
+        border-bottom: 2px solid #ddd;
+    }
+
+    .category-title {
+        margin-top: -70px; /* Снижает отступ сверху, чтобы поднять заголовок */
+    }
+
+
+    #search-input::placeholder {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+</style>
+<body style="background-color: #e0e0e0;">
+
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary fixed-top w-100">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" style="font-size: 40px; font-weight: bold; font-style: italic;">HARDEE'S</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/menu">Меню</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Связь с нами
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="https://wa.me/77072222828">7001</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Вход/Регистрация</a>
+                    </li>
+                </ul>
+
+                <form action="/search" method="get" class="d-flex align-items-center">
+                    <button class="btn btn-warning" type="button" id="openModal">ЗАКАЗАТЬ СЕЙЧАС!</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+</div>
+<br>
+<div class="container" style="margin-top: 70px;">
+    <form id="search-form" class="d-flex align-items-center search-form">
+        <input id="search-input" class="form-control search-input me-3" type="search" placeholder="Введите название бургера" name="query" aria-label="Search"
+               style="border-radius: 35px;">
+        <button class="btn btn-warning search-btn me-3" type="submit"
+                style="border-radius: 35px;">Найти</button>
+    </form>
+</div>
+<div class="wrapper">
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="#category1" class="list-group-item list-group-item-action" id="option1" style="border-radius: 35px;">Рекомендуем от души!</a>
+                    <a href="#category2" class="list-group-item list-group-item-action" id="option2" style="border-radius: 35px;">Соло</a>
+                    <a href="#category3" class="list-group-item list-group-item-action" id="option3" style="border-radius: 35px;">Комбо</a>
+                    <a href="#category4" class="list-group-item list-group-item-action" id="option4" style="border-radius: 35px;">Боксы</a>
+                    <a href="#category5" class="list-group-item list-group-item-action" id="option5" style="border-radius: 35px;">Снэки</a>
+                    <a href="#category6" class="list-group-item list-group-item-action" id="option6" style="border-radius: 35px;">Детский обед</a>
+                    <a href="#category7" class="list-group-item list-group-item-action" id="option7" style="border-radius: 35px;">Напитки</a>
+                    <a href="#" class="list-group-item list-group-item-action" id="option8">Экстра</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4" style="margin-left: 320px;" >
+    <div class="row">
+        <div class="col-md-9">
+            <div id="category1" class="category-section">
+                <h2 class="category-title mb-3" style="font-weight: bold; color: #333;">Рекомендуем от души!</h2>
+                <div class="row mt-3 g-1">
+                    <div class="col-md-4 d-flex" th:each="item : ${items}" th:if="${item.category == 'Рекомендуем от души!'}">
+
+                        <!-- Карточка рекомендуем от души -->
+                        <div class="card card-custom d-flex flex-column" style="height: 100%; border-radius: 35px;"
+                             data-bs-toggle="modal" data-bs-target="#burgerModal"
+                             th:data-name="${item.name}" th:data-description="${item.shortDescription}" th:data-image="${item.imageUrl}">
+                            <button type="button" class="btn" style="background-color: #f7e99e; color: black; border-color: #f7e99e;">Details</button>
+                            <img th:src="${item.getImageUrl()}" class="card-img-top" alt="Card image">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title" th:text="${item.name}"></h5>
+                                <p class="card-text short-description" th:text="${item.shortDescription}"></p>
+                                <button class="btn btn-warning search-btn card-text mt-auto" th:text="${item.price}"
+                                        style="border-radius: 35px; width: 225px; height: 45px;">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="category2" class="category-section">
+                <h2 class="category-title mt-4 mb-3" style="font-weight: bold; color: #333;">Соло</h2>
+                <div class="row mt-3 g-1">
+                    <div class="col-md-4 d-flex" th:each="item : ${items}" th:if="${item.category == 'Соло'}">
+                        <!-- Карточка Соло -->
+                        <div class="card card-custom d-flex flex-column" style="height: 100%; border-radius: 35px;"
+                             data-bs-toggle="modal" data-bs-target="#burgerModal"
+                             th:data-name="${item.name}" th:data-description="${item.shortDescription}" th:data-image="${item.imageUrl}">
+                            <button type="button" class="btn" style="background-color: #f7e99e; color: black; border-color: #f7e99e;">Details</button>
+                            <img th:src="${item.getImageUrl()}" class="card-img-top" alt="Card image">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title" th:text="${item.name}"></h5>
+                                <p class="card-text short-description" th:text="${item.shortDescription}"></p>
+                                <button class="btn btn-warning search-btn card-text mt-auto" th:text="${item.price}"
+                                        style="border-radius: 35px; width: 225px; height: 45px;">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="category3" class="category-section">
+                <h2 class="category-title mt-4 mb-3" style="font-weight: bold; color: #333;">Комбо</h2>
+                <div class="row mt-3 g-1">
+                    <div class="col-md-4 d-flex" th:each="item : ${items}" th:if="${item.category == 'Комбо'}">
+                        <!-- Карточка Комбо -->
+                        <div class="card card-custom d-flex flex-column" style="height: 100%; border-radius: 35px;"
+                             data-bs-toggle="modal" data-bs-target="#burgerModal"
+                             th:data-name="${item.name}" th:data-description="${item.shortDescription}" th:data-image="${item.imageUrl}">
+                            <button type="button" class="btn" style="background-color: #f7e99e; color: black; border-color: #f7e99e;">Details</button>
+                            <img th:src="${item.getImageUrl()}" class="card-img-top" alt="Card image">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title" th:text="${item.name}"></h5>
+                                <p class="card-text short-description" th:text="${item.shortDescription}"></p>
+                                <button class="btn btn-warning search-btn card-text mt-auto" th:text="${item.price}"
+                                        style="border-radius: 35px; width: 225px; height: 45px;">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="category4" class="category-section">
+                <h2 class="category-title mt-4 mb-3" style="font-weight: bold; color: #333;">Боксы</h2>
+                <div class="row mt-3 g-1">
+                    <div class="col-md-4 d-flex" th:each="item : ${items}" th:if="${item.category == 'Боксы'}">
+                        <!-- Карточка -->
+                        <div class="card card-custom d-flex flex-column" style="height: 100%; border-radius: 35px;"
+                             data-bs-toggle="modal" data-bs-target="#burgerModal"
+                             th:data-name="${item.name}" th:data-description="${item.shortDescription}" th:data-image="${item.imageUrl}">
+                            <button type="button" class="btn" style="background-color: #f7e99e; color: black; border-color: #f7e99e;">Details</button>
+                            <img th:src="${item.getImageUrl()}" class="card-img-top" alt="Card image">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title" th:text="${item.name}"></h5>
+                                <p class="card-text short-description" th:text="${item.shortDescription}"></p>
+                                <button class="btn btn-warning search-btn card-text mt-auto" th:text="${item.price}"
+                                        style="border-radius: 35px; width: 225px; height: 45px;">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="category5" class="category-section">
+                <h2 class="category-title mt-4 mb-3" style="font-weight: bold; color: #333;">Снэки</h2>
+                <div class="row mt-3 g-1">
+                    <div class="col-md-4 d-flex" th:each="item : ${items}" th:if="${item.category == 'Снэки'}">
+                        <!-- Карточка -->
+                        <div class="card card-custom d-flex flex-column" style="height: 100%; border-radius: 35px;"
+                             data-bs-toggle="modal" data-bs-target="#burgerModal"
+                             th:data-name="${item.name}" th:data-description="${item.shortDescription}" th:data-image="${item.imageUrl}">
+                            <button type="button" class="btn" style="background-color: #f7e99e; color: black; border-color: #f7e99e;">Details</button>
+                            <img th:src="${item.getImageUrl()}" class="card-img-top" alt="Card image">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title" th:text="${item.name}"></h5>
+                                <p class="card-text short-description" th:text="${item.shortDescription}"></p>
+                                <button class="btn btn-warning search-btn card-text mt-auto" th:text="${item.price}"
+                                        style="border-radius: 35px; width: 225px; height: 45px;">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="category6" class="category-section">
+                <h2 class="category-title mt-4 mb-3" style="font-weight: bold; color: #333;">Детский обед</h2>
+                <div class="row mt-3 g-1">
+                    <div class="col-md-4 d-flex" th:each="item : ${items}" th:if="${item.category == 'Детский обед'}">
+                        <!-- Карточка -->
+                        <div class="card card-custom d-flex flex-column" style="height: 100%; border-radius: 35px;"
+                             data-bs-toggle="modal" data-bs-target="#burgerModal"
+                             th:data-name="${item.name}" th:data-description="${item.shortDescription}" th:data-image="${item.imageUrl}">
+                            <button type="button" class="btn" style="background-color: #f7e99e; color: black; border-color: #f7e99e;">Details</button>
+                            <img th:src="${item.getImageUrl()}" class="card-img-top" alt="Card image">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title" th:text="${item.name}"></h5>
+                                <p class="card-text short-description" th:text="${item.shortDescription}"></p>
+                                <button class="btn btn-warning search-btn card-text mt-auto" th:text="${item.price}"
+                                        style="border-radius: 35px; width: 225px; height: 45px;">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="category7" class="category-section">
+                <h2 class="category-title mt-4 mb-3" style="font-weight: bold; color: #333;">Напитки</h2>
+                <div class="row mt-3 g-1">
+                    <div class="col-md-4 d-flex" th:each="item : ${items}" th:if="${item.category == 'Напитки'}">
+                        <!-- Карточка -->
+                        <div class="card card-custom d-flex flex-column" style="height: 100%; border-radius: 35px;"
+                             data-bs-toggle="modal" data-bs-target="#burgerModal"
+                             th:data-name="${item.name}" th:data-description="${item.shortDescription}" th:data-image="${item.imageUrl}">
+                            <button type="button" class="btn" style="background-color: #f7e99e; color: black; border-color: #f7e99e;">Details</button>
+                            <img th:src="${item.getImageUrl()}" class="card-img-top" alt="Card image">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title" th:text="${item.name}"></h5>
+                                <p class="card-text short-description" th:text="${item.shortDescription}"></p>
+                                <button class="btn btn-warning search-btn card-text mt-auto" th:text="${item.price}"
+                                        style="border-radius: 35px; width: 225px; height: 45px;">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="category8" class="category-section">
+                <h2 class="category-title mt-4 mb-3" style="font-weight: bold; color: #333;">Экстра</h2>
+                <div class="row mt-3 g-1">
+                    <div class="col-md-4 d-flex" th:each="item : ${items}" th:if="${item.category == 'Экстра'}">
+                        <!-- Карточка -->
+                        <div class="card card-custom d-flex flex-column" style="height: 100%; border-radius: 35px;"
+                             data-bs-toggle="modal" data-bs-target="#burgerModal"
+                             th:data-name="${item.name}" th:data-description="${item.shortDescription}" th:data-image="${item.imageUrl}">
+                            <button type="button" class="btn" style="background-color: #f7e99e; color: black; border-color: #f7e99e;">Details</button>
+                            <img th:src="${item.getImageUrl()}" class="card-img-top" alt="Card image">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title" th:text="${item.name}"></h5>
+                                <p class="card-text short-description" th:text="${item.shortDescription}"></p>
+                                <button class="btn btn-warning search-btn card-text mt-auto" th:text="${item.price}"
+                                        style="border-radius: 35px; width: 225px; height: 45px;">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer style="background-color: #f8f9fa; padding: 20px; text-align: center;">
+    <p>Контактные данные: 7001</p>
+    <p>Электронная почта: example@example.com</p>
+    <p>&copy; 2024 Моя компания</p>
+    <div>
+        <a href="#">Политика конфиденциальности</a> |
+        <a href="#">Условия использования</a>
+    </div>
+</footer>
+
+<!-- Модалка для поиска -->
+<div class="modal fade" id="burgerModal2" tabindex="-1" aria-labelledby="burgerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header">
+                <h5 class="modal-title" id="burgerModalLabel2" style="font-size: 1.8rem; font-weight: bold; color: #333;">Результат поиска</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Изображение бургера -->
+                <img id="burgerImage" src="" style="width: 150px; height: 150px;" alt="Burger Image">
+                <h5 id="burgerName" style="margin-top: 15px;"></h5>
+                <p id="burgerDescription"></p>
+
+                <div class="d-flex justify-content-between">
+                    <!-- Блок добавления соусов -->
+                    <div class="mb-3" style="flex: 1;">
+                        <label class="form-label">Добавить соус:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="mainez" id="addMainez2">
+                            <label class="form-check-label" for="addMainez">Майонез</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="gorchiza" id="addGorchiza2">
+                            <label class="form-check-label" for="addGorchiza">Горчица</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="sir" id="addSir2">
+                            <label class="form-check-label" for="addSir">Сырный</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="ketchyp" id="addKetchyp2">
+                            <label class="form-check-label" for="addKetchyp">Кетчуп</label>
+                        </div>
+                    </div>
+
+                    <!-- Блок удаления ингредиентов -->
+                    <div class="mb-3" style="flex: 1;">
+                        <label class="form-label">Удалить ингредиенты:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="cheese" id="removeCheese2">
+                            <label class="form-check-label" for="removeCheese">Убрать сыр</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="lettuce" id="removeLettuce2">
+                            <label class="form-check-label" for="removeLettuce">Убрать салат</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="tomato" id="removeTomato2">
+                            <label class="form-check-label" for="removeTomato">Убрать помидоры</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Блок добавления напитков -->
+                <div class="mb-3">
+                    <label class="form-label">Добавить напиток:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="cola" id="addCocaCola2">
+                        <label class="form-check-label" for="addCocaCola">CocaCola 0,5 Бутылка</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="gorchiza" id="add7-ap2">
+                        <label class="form-check-label" for="add7-ap">7-App 0,5 Бутылка</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="sir" id="addMiranda2">
+                        <label class="form-check-label" for="addMiranda">Miranda 0,5 Бутылка</label>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-warning" id="addToCartButton">Добавить в корзину</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка для Заказать сейчас-->
+<div id="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 50px; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center;">
+    <div style="background: #fff; padding: 20px; border-radius: 10px; width: 400px; text-align: center; position: relative;">
+        <span id="closeModal" style="position: absolute; top: 10px; right: 15px; font-size: 20px; cursor: pointer;">&times;</span>
+        <h2 style="margin-top: 0;">Оформление Заказа</h2>
+        <p>Укажите ваши контактные данные и отправьте заявку на оформление заказа, мы перезвоним вам в ближайшее время</p>
+        <form>
+            <label for="name" style="display: block; margin: 10px 0 5px;">Ваше имя</label>
+            <input type="text" id="name" placeholder="Фамилия Имя Отчество" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            <label for="phone" style="display: block; margin: 10px 0 5px;">Телефон</label>
+            <input type="tel" id="phone" placeholder="+7" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            <label for="email" style="display: block; margin: 10px 0 5px;">Почта</label>
+            <input type="email" id="email2" placeholder="На которую выслать счет" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <button type="submit" style="background-color: #ffc107; color: #000; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Отправить заявку</button>
+                <button type="button" id="cancel" style="background-color: #8a8a8a; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Отменить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Модалка для details -->
+<div class="modal fade" id="burgerModal" tabindex="-1" aria-labelledby="burgerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-4 shadow-lg">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fs-4" id="burgerModalLabel">Детальный просмотр бургера</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Левая часть: Изображение товара -->
+                    <div class="col-md-4 d-flex justify-content-center">
+                        <img id="modalImage" src="" class="img-fluid rounded-3 shadow-sm" alt="Burger image" style="max-height: 300px; object-fit: cover;">
+                    </div>
+
+                    <!-- Правая часть: Информация о товаре -->
+                    <div class="col-md-8">
+                        <h5 id="modalTitle" class="text-dark fw-bold"></h5>
+                        <p id="modalDescription" class="text-muted mb-3"></p>
+
+                        <!-- Опции соусов -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Добавить соус:</label>
+                            <div class="d-flex flex-wrap">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="mainez" id="addMainez">
+                                    <label class="form-check-label" for="addMainez">Майонез</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="gorchiza" id="addGorchiza">
+                                    <label class="form-check-label" for="addGorchiza">Горчица</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="sir" id="addSir">
+                                    <label class="form-check-label" for="addSir">Сырный</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="ketchyp" id="addKetchyp">
+                                    <label class="form-check-label" for="addKetchyp">Кетчуп</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="barbeku" id="addBarbeku">
+                                    <label class="form-check-label" for="addBarbeku">Барбекю</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="chesnok" id="addChesnochnii">
+                                    <label class="form-check-label" for="addChesnochnii">Чесночный</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Опции для удаления ингредиентов -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Удалить ингредиенты:</label>
+                            <div class="d-flex flex-wrap">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="cheese" id="removeCheese">
+                                    <label class="form-check-label" for="removeCheese">Убрать сыр</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="lettuce" id="removeLettuce">
+                                    <label class="form-check-label" for="removeLettuce">Убрать салат</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="tomato" id="removeTomato">
+                                    <label class="form-check-label" for="removeTomato">Убрать помидоры</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Напитки -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Добавить напиток:</label>
+                            <div class="d-flex flex-wrap">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="cola" id="addCocaCola">
+                                    <label class="form-check-label" for="addCocaCola">CocaCola 0,5 Бутылка</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="gorchiza" id="add7-ap">
+                                    <label class="form-check-label" for="add7-ap">7-App 0,5 Бутылка</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="sir" id="addMiranda">
+                                    <label class="form-check-label" for="addMiranda">Miranda 0,5 Бутылка</label>
+                                </div>
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" value="ketchyp" id="addDada">
+                                    <label class="form-check-label" for="addDada">Сок Dada Яблоко 0,5 Бутылка</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addToCartModal">Добавить в корзину</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка Оформление заказа -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4 shadow-lg">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fs-4" id="addToCartModalLabel">Оформление заказа</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <!-- Поле для ФИО -->
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label fw-bold">ФИО:</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Введите ваше ФИО" required>
+                    </div>
+                    <!-- Поле для номера телефона -->
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label fw-bold">Номер телефона:</label>
+                        <input type="tel" class="form-control" id="phoneNumber" placeholder="+7 999 999 99 99" required>
+                    </div>
+                    <!-- Поле для электронной почты -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-bold">Электронная почта:</label>
+                        <input type="email" class="form-control" id="email3" placeholder="example@mail.com" required>
+                    </div>
+                    <!-- Адрес доставки -->
+                    <div class="mb-3">
+                        <label for="deliveryAddress" class="form-label fw-bold">Адрес доставки:</label>
+                        <textarea class="form-control" id="deliveryAddress" rows="2" placeholder="Введите адрес доставки" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="submit" class="btn btn-warning" id="submitOrder">Оформить заказ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка Успешное оформление заказа -->
+<div class="modal fade" id="successOrderModal" tabindex="-1" aria-labelledby="successOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4 shadow-lg">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fs-4" id="successOrderModalLabel">Заказ успешно оформлен</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="fs-5">Ваш заказ успешно оформлен!</p>
+                <p class="text-muted">Мы позвоним вам в течение 15 минут.</p>
+            </div>
+            <div class="modal-footer border-top-0 justify-content-center">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка для Входа/Регистрации -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Вход/Регистрация</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <ul class="nav nav-tabs" id="authTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Вход</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">Регистрация</a>
+                    </li>
+                </ul>
+                <div class="tab-content mt-3" id="authTabsContent">
+
+                    <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                        <form>
+                            <div class="mb-3">
+                                <label for="loginEmail" class="form-label">Электронная почта</label>
+                                <input type="email" class="form-control" id="loginEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="loginPassword" class="form-label">Пароль</label>
+                                <input type="password" class="form-control" id="loginPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100">Войти</button>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                        <form>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Имя пользователя</label>
+                                <input type="text" class="form-control" id="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Электронная почта</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Пароль</label>
+                                <input type="password" class="form-control" id="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100">Зарегистрироваться</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Получаем все карточки
+        const cards = document.querySelectorAll('.card');
+
+        // Для каждой карточки добавляем обработчик клика
+        cards.forEach(card => {
+            card.addEventListener('click', function () {
+                // Получаем данные из атрибутов карточки
+                const imageUrl = card.getAttribute('data-image');
+                const name = card.getAttribute('data-name');
+                const description = card.getAttribute('data-description');
+
+                // Получаем элементы модалки
+                const modalImage = document.querySelector('#burgerModal .modal-body img');
+                const modalName = document.querySelector('#burgerModal .modal-body h6');
+                const modalDescription = document.querySelector('#burgerModal .modal-body p');
+
+                // Обновляем данные в модалке
+                modalImage.setAttribute('src', imageUrl);
+                modalName.textContent = name;
+                modalDescription.textContent = description;
+            });
+        });
+    });
+</script>
+<script>
+    const items = document.querySelectorAll('.list-group-item-action');
+
+    items.forEach(item => {
+        item.addEventListener('click', function(event) {
+            // Убираем класс active у всех элементов
+            items.forEach(i => i.classList.remove('active'));
+
+            // Добавляем класс active к тому, на который кликнули
+            event.target.classList.add('active');
+        });
+    });
+</script>
+<script>
+    // Открытие модального окна
+    document.getElementById("openModal").addEventListener("click", function() {
+        document.getElementById("modal").style.display = "flex";
+    });
+
+    // Закрытие модального окна
+    document.getElementById("closeModal").addEventListener("click", function() {
+        document.getElementById("modal").style.display = "none";
+    });
+
+    // Закрытие при нажатии на кнопку "Отменить"
+    document.getElementById("cancel").addEventListener("click", function() {
+        document.getElementById("modal").style.display = "none";
+    });
+
+    // Закрытие при клике вне модального окна
+    window.addEventListener("click", function(event) {
+        const modal = document.getElementById("modal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchForm = document.querySelector('#search-form');
+        const searchInput = document.querySelector('#search-input');
+
+        const modalImage = document.querySelector('#burgerModal2 .modal-body #burgerImage');
+        const modalName = document.querySelector('#burgerModal2 .modal-body #burgerName');
+        const modalDescription = document.querySelector('#burgerModal2 .modal-body #burgerDescription');
+        const modal = new bootstrap.Modal(document.getElementById('burgerModal2'));
+
+        searchForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const query = searchInput.value.trim();
+
+            if (!query) {
+                alert('Введите название бургера');
+                return;
+            }
+
+            try {
+                const response = await fetch('/searchBurger', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `query=${encodeURIComponent(query)}`,
+                });
+
+                if (response.ok) {
+                    const burger = await response.json();
+
+                    if (burger && burger.name && burger.description) {
+                        console.log('URL изображения:', burger.imageUrl);
+
+                        // Используем правильный путь к изображению
+                        const imageUrl = burger.imageUrl && burger.imageUrl !== "" ? burger.imageUrl : '/default.jpg';
+                        modalImage.setAttribute('src', imageUrl);
+                        modalName.textContent = burger.name;
+                        modalDescription.textContent = burger.description;
+
+                        modal.show();
+                    } else {
+                        alert('Бургер не найден');
+                    }
+                } else {
+                    console.error('Ошибка на сервере:', response.status);
+                    alert('Произошла ошибка при поиске. Попробуйте снова.');
+                }
+            } catch (error) {
+                console.error('Ошибка при поиске бургера:', error);
+                alert('Произошла ошибка при поиске. Попробуйте снова.');
+            }
+        });
+    });
+
+</script>
+<script>
+    document.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('.category-section');
+        const menuItems = document.querySelectorAll('.list-group-item');
+
+        let currentSection = null;
+
+        // Находим секцию, которая видна на экране
+       sections.forEach(function(section) {
+           const rect = section.getBoundingClientRect();
+           if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+               currentSection = section.id; // Определяем ID видимой секции
+           }
+       });
+
+       // Подсвечиваем активный элемент в меню
+        menuItems.forEach(function(item) {
+            if (item.getAttribute('href') === '#' + currentSection) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    });
+</script>
+<script>
+    // Обработка регистрации
+    document.querySelector('#register form').addEventListener('submit', function(e) {
+        e.preventDefault();  // Предотвращаем обычную отправку формы
+
+        const username = document.querySelector('#username').value;
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
+
+        // Отправка данных регистрации на сервер
+        fetch('/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, email, password })
+        })
+            .then(response => response.text())
+            .then(data => {
+                alert(data); // Выводим ответ от сервера
+                if (data === "Регистрация успешна!") {
+                    // Закрыть модалку регистрации после успешной регистрации
+                    $('#loginModal').modal('hide');
+                }
+            })
+            .catch(error => console.error('Ошибка при регистрации:', error));
+    });
+
+    // Обработка входа
+    document.querySelector('#login form').addEventListener('submit', function(e) {
+        e.preventDefault();  // Предотвращаем обычную отправку формы
+
+        const email = document.querySelector('#loginEmail').value;
+        const password = document.querySelector('#loginPassword').value;
+
+        // Отправка данных для входа на сервер
+        fetch('/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        })
+            .then(response => response.text())
+            .then(data => {
+                alert(data); // Выводим ответ от сервера
+                if (data === "Успешный вход!") {
+                    // Закрыть модалку и перенаправить
+                    $('#loginModal').modal('hide');
+                    window.location.href = "/";  // Перенаправление на главную страницу или другую страницу
+                }
+            })
+            .catch(error => console.error('Ошибка при входе:', error));
+    });
+</script>
+<script>
+    // Логика обработки формы заказа
+    document.getElementById("submitOrder").addEventListener("click", function () {
+        const form = document.getElementById("orderForm");
+
+        if (form.checkValidity()) {
+            const fullName = document.getElementById("fullName").value;
+            const phoneNumber = document.getElementById("phoneNumber").value;
+            const email = document.getElementById("email").value;
+            const deliveryAddress = document.getElementById("deliveryAddress").value;
+
+            console.log("Заказ оформлен:");
+            console.log("ФИО:", fullName);
+            console.log("Телефон:", phoneNumber);
+            console.log("Почта:", email);
+            console.log("Адрес:", deliveryAddress);
+
+            // Закрываем модалку оформления заказа
+            const orderModal = bootstrap.Modal.getInstance(document.getElementById("addToCartModal"));
+            orderModal.hide();
+
+            // Показываем модалку успешного оформления
+            const successModal = new bootstrap.Modal(document.getElementById("successOrderModal"));
+            successModal.show();
+
+            // Очистка формы
+            form.reset();
+        } else {
+            form.reportValidity(); // Показываем ошибки валидации
+        }
+    });
+</script>
+
+</body>
+</html>
